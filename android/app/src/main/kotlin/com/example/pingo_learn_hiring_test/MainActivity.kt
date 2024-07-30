@@ -1,4 +1,4 @@
-package com.example.pingo_learn_hiring_test
+package in.alvish.eShop
 
 import io.flutter.embedding.android.FlutterActivity
 
