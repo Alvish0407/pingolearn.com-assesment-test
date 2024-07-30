@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340118091042",
+    "project_id": "pingolearn-hiring-test",
+    "storage_bucket": "pingolearn-hiring-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340118091042:android:394d9b6645215c00b4217b",
+        "android_client_info": {
+          "package_name": "in.alvish.eShop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWo_UDR23o0wffa4GqkrCkPxjFNwTmszc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
