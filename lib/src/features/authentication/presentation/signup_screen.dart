@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
+
+    Future<void> onSignUp() async {
+      if (formKey.currentState!.validate()) {
+        final email = emailController.text;
+        final password = passwordController.text;
+        try {
+          final firebaseAuth = FirebaseAuth.instance;
+          await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+
+          // Add user to firestore
+          FirebaseFirestore.instance.collection('users').add({
+            'name': nameController.text,
+            'email': emailController.text,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        } on FirebaseAuthException catch (e) {
+          if (context.mounted) context.errorSnackBar(e.message);
+        }
+      }
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F9FD),
@@ -114,13 +136,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FilledButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  context.successSnackBar('Success');
-                } else {
-                  context.errorSnackBar('Error');
-                }
-              },
+              onPressed: onSignUp,
               child: const Text('Signup'),
             ),
             gapH12,

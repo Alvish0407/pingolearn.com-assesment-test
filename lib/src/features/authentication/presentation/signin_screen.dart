@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,19 @@ class _SignInScreenState extends State<SignInScreen> {
     final passwordVisible = useState(false);
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
+
+    Future<void> onSignIn() async {
+      if (formKey.currentState!.validate()) {
+        final email = emailController.text;
+        final password = passwordController.text;
+        try {
+          final firebaseAuth = FirebaseAuth.instance;
+          await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+        } on FirebaseAuthException catch (e) {
+          if (context.mounted) context.errorSnackBar(e.message);
+        }
+      }
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F9FD),
@@ -98,13 +112,7 @@ class _SignInScreenState extends State<SignInScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FilledButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  context.successSnackBar('Success');
-                } else {
-                  context.errorSnackBar('Error');
-                }
-              },
+              onPressed: onSignIn,
               child: const Text('Login'),
             ),
             gapH12,
