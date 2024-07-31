@@ -5,15 +5,17 @@ import '../../../services/exception_handler.dart';
 import '../domain/product_model.dart';
 
 class RemoteHomeRepository with ExceptionHandlerMixin {
-  @override
-  Future<List<Product>> getCategories({CancelToken? cancelToken}) async {
-    return handleException<List<Product>>(() async {
-      final response = await ApiClient().httpClient.get(
-            '/products',
-            cancelToken: cancelToken,
-          );
+  final ApiClient apiClient;
+  RemoteHomeRepository({required this.apiClient});
 
-      return (response.data['data'] as List).map<Product>((e) => Product.fromJson(e)).toList();
+  Future<List<Product>> getProducts({CancelToken? cancelToken}) async {
+    return handleException<List<Product>>(() async {
+      final response = await apiClient.httpClient.get(
+        '/products',
+        cancelToken: cancelToken,
+      );
+
+      return (response.data['products'] as List).map<Product>((e) => Product.fromJson(e)).toList();
     });
   }
 }

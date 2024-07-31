@@ -9,6 +9,7 @@ part 'product_model.g.dart';
 class Product with _$Product {
   const factory Product({
     required int id,
+    required String title,
     required double price,
     required String category,
     required String description,

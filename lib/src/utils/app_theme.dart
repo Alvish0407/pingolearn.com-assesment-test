@@ -12,11 +12,17 @@ abstract class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: const Color(0xFF0C54BE),
         primary: const Color(0xFF0C54BE),
+        surface: Colors.white,
       ),
       textTheme: Theme.of(context).textTheme.apply(
             bodyColor: const Color(0xff303F60),
             displayColor: const Color(0xff303F60),
           ),
+      extensions: const [
+        AppColors(
+          onSurface2: Color(0xffCED3DC),
+        ),
+      ],
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         isDense: true,
@@ -45,6 +51,38 @@ abstract class AppTheme {
       ),
     );
   }
+}
+
+@immutable
+class AppColors extends ThemeExtension<AppColors> {
+  const AppColors({
+    required this.onSurface2,
+  });
+
+  final Color? onSurface2;
+
+  @override
+  AppColors copyWith({
+    Color? green,
+    Color? onSurface2,
+  }) {
+    return AppColors(
+      onSurface2: onSurface2 ?? this.onSurface2,
+    );
+  }
+
+  @override
+  AppColors lerp(AppColors? other, double t) {
+    if (other is! AppColors) {
+      return this;
+    }
+    return AppColors(
+      onSurface2: Color.lerp(onSurface2, other.onSurface2, t),
+    );
+  }
+
+  @override
+  String toString() => 'AppColors(onSurface2: $onSurface2)';
 }
 
 extension BuildContextX on BuildContext {
