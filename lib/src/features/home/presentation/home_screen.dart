@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,16 +42,26 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: GridView.builder(
-        itemCount: products.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.7,
-        ),
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ProductCard(product: product);
+      body: RefreshIndicator.adaptive(
+        onRefresh: () async {
+          await context.read<HomeProvider>().getProducts();
         },
+        child: StreamBuilder(
+          stream: FirebaseRemoteConfig.instance.onConfigUpdated,
+          builder: (context, snapshot) {
+            return GridView.builder(
+              itemCount: products.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+              ),
+              itemBuilder: (context, index) {
+                final product = products[index];
+                return ProductCard(product: product);
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -58,10 +69,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class ProductCard extends StatelessWidget {
   final Product product;
-  const ProductCard({super.key, required this.product});
+
+  const ProductCard({
+    super.key,
+    required this.product,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final showDiscountedPrice = context.watch<HomeProvider>().showDiscountedPrice;
     final price = product.price;
     final discountPrice = price - (price * product.discountPercentage / 100);
     final discountPercentage = product.discountPercentage;
@@ -97,30 +113,36 @@ class ProductCard extends StatelessWidget {
                   style: context.theme.textTheme.labelMedium,
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      '\$$price',
-                      style: context.theme.textTheme.labelSmall?.copyWith(
-                        decoration: TextDecoration.lineThrough,
-                        color: context.theme.extension<AppColors>()?.onSurface2,
-                        decorationColor: context.theme.extension<AppColors>()?.onSurface2,
+                if (!showDiscountedPrice)
+                  Text(
+                    '\$$price',
+                    style: context.theme.textTheme.labelSmall,
+                  ),
+                if (showDiscountedPrice)
+                  Row(
+                    children: [
+                      Text(
+                        '\$$price',
+                        style: context.theme.textTheme.labelSmall?.copyWith(
+                          decoration: TextDecoration.lineThrough,
+                          color: context.theme.extension<AppColors>()?.onSurface2,
+                          decorationColor: context.theme.extension<AppColors>()?.onSurface2,
+                        ),
                       ),
-                    ),
-                    gapW12,
-                    Text(
-                      '\$${discountPrice.toStringAsFixed(2)}',
-                      style: context.theme.textTheme.labelSmall,
-                    ),
-                    gapW12,
-                    Text(
-                      '$discountPercentage% off',
-                      style: context.theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.green,
+                      gapW12,
+                      Text(
+                        '\$${discountPrice.toStringAsFixed(2)}',
+                        style: context.theme.textTheme.labelSmall,
                       ),
-                    ),
-                  ],
-                ),
+                      gapW12,
+                      Text(
+                        '$discountPercentage% off',
+                        style: context.theme.textTheme.labelSmall?.copyWith(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
