@@ -1,6 +1,4 @@
-### An E-commerce app _(eShop)_ built with Flutter & Firebase
-
-
+### A product listing app (eShop) using Flutter, Cloud Firestore & Remote Config
 
 https://github.com/user-attachments/assets/bc066ae5-30fe-426f-b4b8-f91f5951fe69
 
