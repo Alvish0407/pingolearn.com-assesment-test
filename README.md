@@ -1,4 +1,4 @@
-### A product listing app (eShop) using Flutter, Cloud Firestore & Remote Config
+### A product listing app (eShop) built with Flutter, Cloud Firestore & Remote Config within 6 Hours
 
 https://github.com/user-attachments/assets/bc066ae5-30fe-426f-b4b8-f91f5951fe69
 
